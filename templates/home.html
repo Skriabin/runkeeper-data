@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+    <style>
+    </style>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="/static/css/main.css">
+    </head>
+    <body>
+        <h1>Runkeeper Data Tracker</h1>
+        <div>
+            <form enctype=multipart/form-data action="/upload" method="POST">
+                <label for="csv">Select a CSV file:</label><br>
+                <input type="file" id="csv" value="Select CSV..." name="file">
+                <input type="submit" value="Submit">
+            </form>
+            <p> {{ get_flashed_messages() }} </p>
+            <div class="flex-container">
+                <div id="table-container" class="flex-child">
+                    Hello
+                </div>
+                <div id="chart-container" class="flex-child">
+                    <canvas id="myChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        
+        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+        <script src="static/main.js"></script>
+
+        <script>
+
+        {% if file_data %}
+
+            let table = "<table><tr><th>Date</th><th>Pace</th></tr>"
+            val = JSON.parse({{ file_data | tojson }});
+            for (x in val) {
+                let date = (val[x])["Date"]
+                let pace = (val[x])["Average Pace"]
+                table += "<tr><td>" + date + "</td><td>" + pace + "</td></tr>";
+                // Convert minutes to seconds, prior to use by the graph
+                (val[x])["Average Pace"] = minutesToSeconds(pace);
+            }
+            console.log(val[2])
+            table += "</table>"
+            document.getElementById("table-container").innerHTML = table;
+
+            const test = [
+                {"Average Pace": 768, "Date": "2022-07-19"},
+                {"Average Pace": 828, "Date": "2018-05-11"},
+                {"Average Pace": 638, "Date": "2021-02-18"},
+            ]
+        
+            // setup block
+            const data = {
+                datasets: [{
+                    type: 'line',
+                    parsing: {
+                        yAxisKey: 'Average Pace',
+                        xAxisKey: 'Date',
+                    },
+                    label: '# of Votes',
+                    data: val,
+                    backgroundColor: 'red',
+                    borderColor: 'red',
+                    borderWidth: 1,
+                    radius: 2,
+                    label: "Pace",
+                }]
+            }
+
+            // config block
+            const config = {
+                data,
+                options: {
+                    scales: {
+                        x: {
+                            type: 'time',
+                            time: {
+                                unit: 'year'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                stepSize: 30,
+                                padding: 2,
+                                callback: function(value, index, ticks) {
+                                    minutes = Math.floor(value / 60);
+                                    seconds = value % 60;
+                                    if (seconds == 0) {
+                                        seconds = "00";
+                                    }
+                                    x = minutes + ':' + seconds;
+
+                                    return x;
+                                }
+                            },
+                            suggestedMin: 360,
+                            suggestedMax: 900,
+                        
+                        }
+                    },
+                }
+            };
+
+            // render / init block
+            const myChart = new Chart(
+                document.getElementById('myChart'),
+                config
+            );
+            
+            const graph_data = [];
+
+        {% endif %}
+
+        </script>        
+    </body>
+</html>
