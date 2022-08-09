@@ -1,0 +1,40 @@
+
+body {
+    padding-top: 30px;
+    padding-left: 50px;
+    padding-right: 50px;
+
+}
+
+h1 {
+    color:red;
+}
+
+input {
+    margin-top: 10px;
+}
+
+table {
+    border: 1px solid black;
+}
+
+td {
+    border: 1px black solid;
+    width: 120px;
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: flex-start;
+}
+
+.flex-child {
+    position: relative;
+}
+
+#chart-container {
+    position: relative;
+    width: 60%;
+}
