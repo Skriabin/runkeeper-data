@@ -15,10 +15,19 @@
                 <input type="file" id="csv" value="Select CSV..." name="file">
                 <input type="submit" value="Submit">
             </form>
-            <p> {{ get_flashed_messages() }} </p>
+            <div>
+                <br>
+                <form action="/dashboard" method="GET">
+                    <input name="username">
+                    <input type="submit" value="Submit">
+                </form>
+                <a href="/dashboard">DASHBOARD</a>
+            </div>
+            {% if get_flashed_messages() %}
+                <p> {{ get_flashed_messages() }} </p>
+            {% endif %}
             <div class="flex-container">
                 <div id="table-container" class="flex-child">
-                    Hello
                 </div>
                 <div id="chart-container" class="flex-child">
                     <canvas id="myChart"></canvas>
@@ -33,88 +42,107 @@
         <script src="static/main.js"></script>
 
         <script>
+            function render_table(data) {
+                let button = "<button id='sort'>O</button"
+                let table = "<table><tr><th>Date</th><th>Pace</th><th>Distance" + button + "</th></tr>"
+                for (x in data) {
+                    let date = (data[x])["Date"]
+                    let pace = (data[x])["Average Pace"]
+                    let dist = (data[x])["Distance (mi)"]
+                    table += "<tr><td>" + date + "</td><td>" + pace + "</td><td>" + dist + "</td></tr>";
+                    
+                }
+                table += "</table>"
+                document.getElementById("table-container").innerHTML = table;
+                document.getElementById("sort").addEventListener('click', function() { sort_list(data); });
+                }
+            
+            function sort_list(arr) {
+                let n = arr.length;
+                let dist = 'Distance (mi)'
+                let i, key, j;
 
-        {% if file_data %}
+                for (i = 1; i < n; i++) {
+                    key = arr[i];
+                    key_dist = arr[i][dist];
+                    j = i - 1;
 
-            let table = "<table><tr><th>Date</th><th>Pace</th></tr>"
-            val = JSON.parse({{ file_data | tojson }});
-            for (x in val) {
-                let date = (val[x])["Date"]
-                let pace = (val[x])["Average Pace"]
-                table += "<tr><td>" + date + "</td><td>" + pace + "</td></tr>";
-                // Convert minutes to seconds, prior to use by the graph
-                (val[x])["Average Pace"] = minutesToSeconds(pace);
-            }
-            console.log(val[2])
-            table += "</table>"
-            document.getElementById("table-container").innerHTML = table;
+                    while (j >= 0 && ((arr[j])[dist]) > key_dist) {
+                        arr[j + 1] = arr[j];
+                        j = j - 1;
+                    }
+                    arr[j + 1] = key;
+                }
+                render_table(arr);
+            }    
 
-            const test = [
-                {"Average Pace": 768, "Date": "2022-07-19"},
-                {"Average Pace": 828, "Date": "2018-05-11"},
-                {"Average Pace": 638, "Date": "2021-02-18"},
-            ]
-        
-            // setup block
-            const data = {
-                datasets: [{
-                    type: 'line',
-                    parsing: {
-                        yAxisKey: 'Average Pace',
-                        xAxisKey: 'Date',
-                    },
-                    label: '# of Votes',
-                    data: val,
-                    backgroundColor: 'red',
-                    borderColor: 'red',
-                    borderWidth: 1,
-                    radius: 2,
-                    label: "Pace",
-                }]
-            }
+            function render_graph(input) {
 
-            // config block
-            const config = {
-                data,
-                options: {
-                    scales: {
-                        x: {
-                            type: 'time',
-                            time: {
-                                unit: 'year'
-                            }
+                let arr = minutesToSeconds(input);
+
+                // setup block
+                const data = {
+                    datasets: [{
+                        type: 'line',
+                        parsing: {
+                            yAxisKey: 'Average Pace',
+                            xAxisKey: 'Date',
                         },
-                        y: {
-                            ticks: {
-                                stepSize: 30,
-                                padding: 2,
-                                callback: function(value, index, ticks) {
-                                    minutes = Math.floor(value / 60);
-                                    seconds = value % 60;
-                                    if (seconds == 0) {
-                                        seconds = "00";
-                                    }
-                                    x = minutes + ':' + seconds;
+                        label: '# of Votes',
+                        data: arr,
+                        backgroundColor: 'red',
+                        borderColor: 'red',
+                        borderWidth: 1,
+                        radius: 2,
+                        label: "Pace",
+                    }]
+                }
 
-                                    return x;
+                // config block
+                const config = {
+                    data,
+                    options: {
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    unit: 'year'
                                 }
                             },
-                            suggestedMin: 360,
-                            suggestedMax: 900,
-                        
-                        }
-                    },
-                }
-            };
+                            y: {
+                                suggestedMin: 360,
+                                suggestedMax: 900,
+                                ticks: {
+                                    stepSize: 30,
+                                    padding: 2,
+                                    callback: function(value, index, ticks) {
+                                        minutes = Math.floor(value / 60);
+                                        seconds = value % 60;
+                                        if (seconds == 0) {
+                                            seconds = "00";
+                                        }
+                                        x = minutes + ':' + seconds;
 
-            // render / init block
-            const myChart = new Chart(
-                document.getElementById('myChart'),
-                config
-            );
-            
-            const graph_data = [];
+                                        return x;
+                                    }
+                                },                   
+                            }
+                        },
+                    }
+                };
 
+                // render / init block
+                const myChart = new Chart(
+                    document.getElementById('myChart'),
+                    config
+                );
+            }
+
+        {% if file_data %}
+            // convert json to variable & render table:
+            val = JSON.parse({{ file_data | tojson }});
+            render_table(val);
+            render_graph(val);
         {% endif %}
 
         </script>        

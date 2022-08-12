@@ -27,6 +27,7 @@ def process_file(filename):
         # Obtain CSV file headers by INDEX
         header = f.readline()
         dateHeader = (header.rsplit(','))[1]
+        distHeader = (header.rsplit(','))[4]
         paceHeader = (header.rsplit(','))[6]
 
         # Establish variables
@@ -38,6 +39,7 @@ def process_file(filename):
         for row in x[1: ]:
             items = row.rsplit(',')
             full_date = items[1]
+            distance = items[4]
             pace = items[6]
 
             # Remove runs without pace
@@ -60,7 +62,7 @@ def process_file(filename):
                     break
 
             # Create a dictionary & append to array
-            dict = {dateHeader: short_date, paceHeader: pace}
+            dict = {dateHeader: short_date, paceHeader: pace, distHeader: distance}
             array.append(dict)
         f.close()
 
@@ -96,3 +98,10 @@ def upload():
             return render_template('home.html', file_data=file_data)
     return "FAILED"
 
+@app.route("/dashboard")
+def dashboard():
+    try:
+        searchword = request.args.get('username')
+    except Exception as e:
+        searchword = e
+    return render_template("dashboard.html", searchword=searchword)
