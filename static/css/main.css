@@ -16,25 +16,97 @@ input {
 
 table {
     border: 1px solid black;
+    border-collapse: collapse;
 }
 
 td {
     border: 1px black solid;
+    border-collapse: collapse;
     width: 120px;
+}
+
+th {
+    border: 1px black solid;
+    border-collapse: collapse;
+    line-height: 50px;
+    height: 50px;
 }
 
 .flex-container {
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content:space-between;
     align-items: flex-start;
 }
+
 
 .flex-child {
     position: relative;
 }
 
 #chart-container {
-    position: relative;
+    position: sticky;
+    top: 0;
     width: 60%;
 }
+
+#table-container {
+    height: 500px;
+    overflow: auto;
+    border: 2px solid black;
+}
+
+#page {
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+#header {
+    height: 70px;
+    border-bottom: 1px solid rgb(255, 0, 0, 0.5);
+    position: sticky;
+}
+
+#form-submission {
+    padding-top: 30px;
+    padding-bottom: 30px;
+
+}
+
+.inline-text {
+    display: inline;
+}
+
+.title-append {
+    color: red;
+}
+
+.title-spacer {
+    color: red;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+
+#sort {
+    background-image: url(/static/images/iconmonstr-sort-24.svg);
+    background-size: cover;
+    background-color: white;
+    width:27px;
+    height:27px;
+    cursor:pointer;
+    border: none;
+    margin-left: 10px;
+}
+
+#hia {
+    color: blue;
+}
+
+@media (max-width: 1200px) {
+    .flex-container {
+        flex-direction: column;
+    }
+}
+
+

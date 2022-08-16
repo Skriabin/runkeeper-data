@@ -4,3 +4,4 @@ __pycache__/
 instance/
 test.py
 *.logs
+static/images

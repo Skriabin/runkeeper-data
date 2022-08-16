@@ -4,7 +4,7 @@ from markupsafe import escape
 from werkzeug.utils import secure_filename
 
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 
 app.config['UPLOAD_FOLDER'] = os.path.join(app.instance_path, 'uploads')
 app.config["UPLOAD_EXTENSIONS"] = ['.csv']
@@ -68,8 +68,6 @@ def process_file(filename):
 
     output = json.dumps(array)
     return output
-
-
 
 
 

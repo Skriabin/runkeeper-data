@@ -8,28 +8,28 @@
         <link rel="stylesheet" href="/static/css/main.css">
     </head>
     <body>
-        <h1>Runkeeper Data Tracker</h1>
-        <div>
-            <form enctype=multipart/form-data action="/upload" method="POST">
-                <label for="csv">Select a CSV file:</label><br>
-                <input type="file" id="csv" value="Select CSV..." name="file">
-                <input type="submit" value="Submit">
-            </form>
-            <div>
-                <br>
-                <form action="/dashboard" method="GET">
-                    <input name="username">
+        <div id="header">
+            <h1 class="inline-text">Runkeeper Data Tracker</h1>
+            {% if get_flashed_messages() %}
+                    <h2 class="inline-text title-spacer">|</h2>
+                    <h2 class="inline-text title-append">{{ get_flashed_messages() }} </h2>
+            {% endif %}
+            
+        </div>
+        <div id="page">
+            <div id="form-submission">
+                <form enctype=multipart/form-data action="/upload" method="POST">
+                    <label for="csv">Select a CSV file:</label><br>
+                    <input type="file" id="csv" value="Select CSV..." name="file">
                     <input type="submit" value="Submit">
                 </form>
-                <a href="/dashboard">DASHBOARD</a>
             </div>
-            {% if get_flashed_messages() %}
-                <p> {{ get_flashed_messages() }} </p>
-            {% endif %}
+
+            
             <div class="flex-container">
                 <div id="table-container" class="flex-child">
                 </div>
-                <div id="chart-container" class="flex-child">
+                <div id="chart-container" class="flex-child flex-center">
                     <canvas id="myChart"></canvas>
                 </div>
             </div>
@@ -42,108 +42,19 @@
         <script src="static/main.js"></script>
 
         <script>
-            function render_table(data) {
-                let button = "<button id='sort'>O</button"
-                let table = "<table><tr><th>Date</th><th>Pace</th><th>Distance" + button + "</th></tr>"
-                for (x in data) {
-                    let date = (data[x])["Date"]
-                    let pace = (data[x])["Average Pace"]
-                    let dist = (data[x])["Distance (mi)"]
-                    table += "<tr><td>" + date + "</td><td>" + pace + "</td><td>" + dist + "</td></tr>";
-                    
-                }
-                table += "</table>"
-                document.getElementById("table-container").innerHTML = table;
-                document.getElementById("sort").addEventListener('click', function() { sort_list(data); });
-                }
+            var sort_state = 0;
+
             
-            function sort_list(arr) {
-                let n = arr.length;
-                let dist = 'Distance (mi)'
-                let i, key, j;
-
-                for (i = 1; i < n; i++) {
-                    key = arr[i];
-                    key_dist = arr[i][dist];
-                    j = i - 1;
-
-                    while (j >= 0 && ((arr[j])[dist]) > key_dist) {
-                        arr[j + 1] = arr[j];
-                        j = j - 1;
-                    }
-                    arr[j + 1] = key;
-                }
-                render_table(arr);
-            }    
-
-            function render_graph(input) {
-
-                let arr = minutesToSeconds(input);
-
-                // setup block
-                const data = {
-                    datasets: [{
-                        type: 'line',
-                        parsing: {
-                            yAxisKey: 'Average Pace',
-                            xAxisKey: 'Date',
-                        },
-                        label: '# of Votes',
-                        data: arr,
-                        backgroundColor: 'red',
-                        borderColor: 'red',
-                        borderWidth: 1,
-                        radius: 2,
-                        label: "Pace",
-                    }]
-                }
-
-                // config block
-                const config = {
-                    data,
-                    options: {
-                        scales: {
-                            x: {
-                                type: 'time',
-                                time: {
-                                    unit: 'year'
-                                }
-                            },
-                            y: {
-                                suggestedMin: 360,
-                                suggestedMax: 900,
-                                ticks: {
-                                    stepSize: 30,
-                                    padding: 2,
-                                    callback: function(value, index, ticks) {
-                                        minutes = Math.floor(value / 60);
-                                        seconds = value % 60;
-                                        if (seconds == 0) {
-                                            seconds = "00";
-                                        }
-                                        x = minutes + ':' + seconds;
-
-                                        return x;
-                                    }
-                                },                   
-                            }
-                        },
-                    }
-                };
-
-                // render / init block
-                const myChart = new Chart(
-                    document.getElementById('myChart'),
-                    config
-                );
-            }
-
-        {% if file_data %}
-            // convert json to variable & render table:
-            val = JSON.parse({{ file_data | tojson }});
-            render_table(val);
-            render_graph(val);
-        {% endif %}
+            {% if file_data %}
+                // convert json to variable & render table:
+                
+                const val = JSON.parse({{ file_data | tojson }});
+                const chart_val = JSON.parse({{ file_data | tojson }});
+                myTable = render_table(val);
+                myChart = render_graph(chart_val);
+                
+                
+            {% endif %}
 
         </script>        
     </body>
