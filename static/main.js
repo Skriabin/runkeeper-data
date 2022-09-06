@@ -1,10 +1,7 @@
-const actions = [
+"use strict";
 
-    {
-        name: 'Trigger Tooltip',
-        handler: triggerTooltip
-    }
-];
+
+
 
 function triggerTooltip(chart, index) {
     const tooltip = chart.tooltip;
@@ -27,22 +24,19 @@ function clearTooltip(chart) {
     return;
 }
 
-function updateChart(chart) {
-
-}
 
 
 function tdHighlight() {
-    index = 0;
+    let index = 0;
     document.querySelectorAll('td')
     .forEach(e => e.addEventListener('mouseover', function() {
+        let date, dataset, chartDate;
         // highlight table row
         e.parentNode.style['background-color'] = 'rgb(255, 0, 0, 0.2)';
 
         // Trigger graph data tooltips on table row hover
         date = e.parentNode.childNodes[0].innerHTML;
         dataset = myChart.config.data.datasets[0].data;
-        var index;
         for (const obj in dataset) {
             chartDate = dataset[obj]['Date'];
             if (chartDate == date) {
@@ -62,32 +56,33 @@ function tdHighlight() {
 
 
 function minutesToSeconds(arr) {
-    console.log(typeof(arr));
+    let x, pace, items, seconds
     if (typeof(arr) === 'object') {  
         for (x in arr) {
             // Convert minutes to seconds, prior to use by the graph
-            let pace = (arr[x])["Average Pace"]
-            let items = pace.split(":");
+            pace = (arr[x])["Average Pace"]
+            items = pace.split(":");
             // convert minutes to seconds
-            let seconds = (parseInt(items[0]) * 60) + parseInt(items[1]);
+            seconds = (parseInt(items[0]) * 60) + parseInt(items[1]);
             (arr[x])["Average Pace"] = seconds;
         }
     } else if (typeof(arr) === 'string') {
         // Convert minutes to seconds, prior to use by the graph
-        let items = arr.split(":");
+        items = arr.split(":");
         // convert minutes to seconds
-        let seconds = (parseInt(items[0]) * 60) + parseInt(items[1]);
+        seconds = (parseInt(items[0]) * 60) + parseInt(items[1]);
         arr = seconds;
     }
     return arr
 }
 
-function secondstoMinutes(arr) {
+function secondsToMinutes(arr) {
+    let x, pace, minutes, seconds;
     for (x in arr) {
         // convert seconds to minutes
-        let pace = arr[x]["Average Pace"];
-        let minutes = Math.floor(pace / 60);
-        let seconds = pace % 60;
+        pace = arr[x]["Average Pace"];
+        minutes = Math.floor(pace / 60);
+        seconds = pace % 60;
         if (seconds < 10) {
             seconds = "0" + seconds;
         }
@@ -99,66 +94,104 @@ function secondstoMinutes(arr) {
 }
 
 function render_table(data) {
-    // check data is NOT in minutes, otherwise convert
-    let data_sample = data[1]["Average Pace"];
-    if (typeof(data_sample) === 'number') {
-        data = secondstoMinutes(data);
-    }
-    
-    let button = "<button id='sort'></button"
-    let table = "<table><tr><th>Date</th><th>Pace</th><th>Distance" + button + "</th></tr>"
-    for (x in data) {
-        let date = (data[x])["Date"];
-        let pace = (data[x])["Average Pace"];
-        let dist = (data[x])["Distance (mi)"];
+    let bttnSortDist = "<button id='sort-dist'></button";
+    let bttnSortPace = "<button id='sort-pace'></button";
+    let table = "<table><tr id='th-row'><th>Date" + "</th><th>Pace" + bttnSortPace + "</th><th>Distance" + bttnSortDist + "</th></tr>"
+    for (let x in data) {
+        let date = data[x]["Date"];
+        let pace = data[x]["Average Pace"];
+        let dist = data[x]["Distance (mi)"];
         table += "<tr><td>" + date + "</td><td>" + pace + "</td><td>" + dist + "</td></tr>";
     }
 
     table += "</table>"
     document.getElementById("table-container").innerHTML = table;
-    document.getElementById("sort").addEventListener('click', function() { sort_list(data); });
+    document.getElementById("sort-dist").addEventListener('click', function() { sort_dist(data); });
+    document.getElementById("sort-pace").addEventListener('click', function() { sort_pace(data); });
     tdHighlight();
 }
 
-function sort_list(arr) {
-    if (sort_state == 0 || sort_state == 1) {
-        let n = arr.length;
-        let dist = 'Distance (mi)'
-        let i, key, j;
+function sort_pace(arr) {
+    let n = arr.length;
+    let i, j, row, value;
 
+    // Convert 'Average Pace' to seconds
+    if (typeof(arr[1]['Average Pace']) === 'string') {
+        arr = minutesToSeconds(arr)
+    };
+
+    console.log(arr[1]['Average Pace']);
+
+    if (sortPaceState == 0 || sortPaceState == 1) {
+        console.log("SORTING");
+        for (i = 1; i < n; i++) {
+            row = arr[i];
+            value = arr[i]['Average Pace'];
+            j = i - 1;
+            while (j >= 0 && ((arr[j])['Average Pace']) > value) {
+                arr[j + 1] = arr[j];
+                j = j - 1;
+            }
+            arr[j + 1] = row;
+        }
+        sortPaceState = 2;
+        arr = secondsToMinutes(arr);
+        render_table(arr);
+        document.getElementById("sort-pace").style["background-image"] = "url(/static/images/iconmonstr-sort-25.svg)";
+        return;
+    } 
+    if (sortPaceState == 2) {
+        console.log("SORTPACESTATE 2");
+        for (i = 1; i < n; i++) {
+            row = arr[i];
+            value = arr[i]['Average Pace'];
+            j = i - 1;
+            while (j >= 0 && ((arr[j])['Average Pace']) < value) {
+                arr[j + 1] = arr[j];
+                j = j - 1;
+            }
+            arr[j + 1] = row;
+        }
+        sortPaceState = 1;
+        arr = secondsToMinutes(arr);
+        render_table(arr);
+        return;   
+    }
+};
+
+function sort_dist(arr) {
+    let n = arr.length;
+    let dist = 'Distance (mi)'
+    let i, key, j, key_dist;
+
+    if (sortDistState == 0 || sortDistState == 1) {
         for (i = 1; i < n; i++) {
             key = arr[i];
             key_dist = arr[i][dist];
             j = i - 1;
-
             while (j >= 0 && ((arr[j])[dist]) > key_dist) {
                 arr[j + 1] = arr[j];
                 j = j - 1;
             }
             arr[j + 1] = key;
         }
-        sort_state = 2;
+        sortDistState = 2;
         render_table(arr);
-        document.getElementById("sort").style["background-image"] = "url(/static/images/iconmonstr-sort-25.svg)";
+        document.getElementById("sort-dist").style["background-image"] = "url(/static/images/iconmonstr-sort-25.svg)";
         return;
     }
-    if (sort_state == 2) {
-        let n = arr.length;
-        let dist = 'Distance (mi)'
-        let i, key, j;
-
+    if (sortDistState == 2) {
         for (i = 1; i < n; i++) {
             key = arr[i];
             key_dist = arr[i][dist];
             j = i - 1;
-
             while (j >= 0 && ((arr[j])[dist]) < key_dist) {
                 arr[j + 1] = arr[j];
                 j = j - 1;
             }
             arr[j + 1] = key;
         }
-        sort_state = 1;
+        sortDistState = 1;
         render_table(arr);
         return;
     }
@@ -204,6 +237,7 @@ function render_graph(input) {
                         stepSize: 30,
                         padding: 2,
                         callback: function(value, index, ticks) {
+                            let minutes, seconds, x;
                             minutes = Math.floor(value / 60);
                             seconds = value % 60;
                             if (seconds == 0) {
@@ -227,3 +261,4 @@ function render_graph(input) {
     
     return myChart;
 }
+

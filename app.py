@@ -78,23 +78,30 @@ def home():
 @app.route("/upload", methods=['POST'])
 def upload():
     if request.method == 'POST':
+        print("1")
         # check if the post request has the file part
-        if 'file' not in request.files:
+        print("1")
+        if 'file-submit' not in request.files:
             flash('No file was submitted')
             return render_template("home.html")
-        file = request.files['file']
+        file = request.files['file-submit']
+        print("FILE:", file)
         # if the user does not select a file, the browser submits an
         # empty file without a filename.
+        print("2")
         if file.filename == '':
             flash('No selected file')
-            return redirect(request.url)
+            return render_template('home.html')
+        print("3")
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             file_data = process_file(filename)
             flash(filename)
             return render_template('home.html', file_data=file_data)
+        print("HELLO")
     return "FAILED"
+
 
 @app.route("/dashboard")
 def dashboard():

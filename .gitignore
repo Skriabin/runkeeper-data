@@ -3,5 +3,6 @@
 __pycache__/
 instance/
 test.py
+test.js
 *.logs
 static/images

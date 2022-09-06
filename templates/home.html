@@ -6,6 +6,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="/static/css/main.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     </head>
     <body>
         <div id="header">
@@ -16,20 +17,47 @@
             {% endif %}
             
         </div>
-        <div id="page">
-            <div id="form-submission">
-                <form enctype=multipart/form-data action="/upload" method="POST">
-                    <label for="csv">Select a CSV file:</label><br>
-                    <input type="file" id="csv" value="Select CSV..." name="file">
-                    <input type="submit" value="Submit">
-                </form>
-            </div>
-
-            
-            <div class="flex-container">
-                <div id="table-container" class="flex-child">
+        <div id="page">         
+            <div id="dashboard-container" class="flex-container">
+                <div id="left-half">
+                    <div id="form-submission" class="standard-container">
+                        <div id="form-p1">
+                            <h2>How does it work?</h2>
+                            <p>Export your data from your Runkeeper application and upload it to 
+                                here to see a visual representation of your progress.
+                            </p>
+                            <div class="center-items">
+                                <button class="nav-bttn" id="form-switch">Continue</button>
+                            </div>
+                        </div>
+                        <div id="form-p2">
+                            <div id="form-p2-left">
+                                <div id="flash">
+                                    <form enctype="multipart/form-data" action="/upload" method="POST">
+                                        <input type="file" id="file-submit" name="file-submit">
+                                        <button type="submit">Upload</button>
+                                    </form>
+                                </div>
+                            </div>
+                            <div id="form-p2-right">
+                                <form class="box" enctype="multipart/form-data" action="/upload" method="POST">
+                                    <div class="box_input">
+                                        <input class="box_file" type="file" name="file" id="file" data-multiple-caption="{count} files selected" multiple />
+                                        <label for="file"><strong>Choose a file</strong><span class="box_dragndrop"> or drag it here</span></label>
+                                        <button class="box_button" type="submit">Upload</button>
+                                    </div>
+                                    <div class="box_uploading">Uploading...</div>
+                                    <div class="box_success">Done!</div>
+                                    <div class="box_error">Error! <span></span>.</div>
+                                </form>
+                                <!-- DRAG & DROP ZONE-->
+                            </div>
+                        </div>
+                    </div>
+                    <div id="table-container" class="grey-font">
+                    </div>
                 </div>
-                <div id="chart-container" class="flex-child flex-center">
+                <div id="chart-container" class="flex-child flex-center standard-container">
                     <canvas id="myChart"></canvas>
                 </div>
             </div>
@@ -42,9 +70,92 @@
         <script src="static/main.js"></script>
 
         <script>
-            var sort_state = 0;
+            var sortDistState = 0;
+            var sortPaceState = 0;
+            var sortDateState = 0;
+
+            var isAdvancedUpload = function() {
+                var div = document.createElement('div');
+                return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
+            }();
+
+            var $form = $('.box');
+            var $input = $('.box_file')
+
+            if (isAdvancedUpload) {
+                $form.addClass('has-advanced-upload');
+                
+
+                var droppedFile = false;
+
+                $form.on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                })
+                .on('dragover dragenter', function() {
+                    $form.addClass('is-dragover');
+                })
+                .on('dragleave dragend drop', function() {
+                    $form.removeClass('is-dragover');
+                })
+                .on('drop', function(e) {
+                    droppedFile = e.originalEvent.dataTransfer.files;
+                    $form.trigger('submit');
+                });
+            }
+
+            $form.on('submit', function(e) {
+                console.log("ENTERING");
+                if ($form.hasClass('is-uploading')) return false;
+
+                $form.addClass('is-uploading').removeClass('is-error');
+
+                if (isAdvancedUpload) {
+                    e.preventDefault();
+
+                    var ajaxData = new FormData($form.get(0));
+
+                    if (droppedFile) {
+                        $.each( droppedFile, function(i, file) {
+                            ajaxData.append( $input.attr('name'), file );
+                        });
+                    }
+
+
+
+                    $.ajax({
+                        url: $form.attr('action'),
+                        type: $form.attr('method'),
+                        data: ajaxData,
+                        dataType: 'json',
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        complete: function() {
+                            console.log("COMPLETE");
+                            $form.removeClass('is-uploading');
+                        },
+                        success: function(data) {
+                            console.log("SUCCESS");
+                            $form.addClass( data.success == true ? 'is-success' : 'is-error' );
+                            if (!data.success) $errorMsg.text(data.error);
+                        },
+                    })
+
+                } else {
+                    // ajax for legacy browser
+                }
+            });
 
             
+
+            document.getElementById("form-switch").addEventListener('click', 
+            function() {
+                document.getElementById("form-p1").style.display = "none";
+                document.getElementById("form-p2").style.display = "flex";
+            })
+
+
             {% if file_data %}
                 // convert json to variable & render table:
                 
