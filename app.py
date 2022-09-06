@@ -1,5 +1,5 @@
 import os
-from flask import Flask, redirect, render_template, request, flash, url_for, json
+from flask import Flask, redirect, render_template, request, flash, url_for, json, jsonify
 from markupsafe import escape
 from werkzeug.utils import secure_filename
 
@@ -78,29 +78,25 @@ def home():
 @app.route("/upload", methods=['POST'])
 def upload():
     if request.method == 'POST':
-        print("1")
+        file = request.files.get('file')
         # check if the post request has the file part
-        print("1")
-        if 'file-submit' not in request.files:
-            flash('No file was submitted')
-            return render_template("home.html")
-        file = request.files['file-submit']
-        print("FILE:", file)
-        # if the user does not select a file, the browser submits an
-        # empty file without a filename.
-        print("2")
-        if file.filename == '':
+
+        if file == '':
             flash('No selected file')
             return render_template('home.html')
         print("3")
+        print("file.filename: ", file.filename)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             file_data = process_file(filename)
             flash(filename)
-            return render_template('home.html', file_data=file_data)
-        print("HELLO")
+            print("RETURNING...")
+            return jsonify(file_data)
+        else:
+            print("FILE NOT ALLOWED")
     return "FAILED"
+
 
 
 @app.route("/dashboard")

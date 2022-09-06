@@ -254,7 +254,7 @@ function render_graph(input) {
     };
 
     // render / init block
-    const myChart = new Chart(
+    myChart = new Chart(
         document.getElementById('myChart'),
         config
     );

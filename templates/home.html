@@ -31,27 +31,18 @@
                             </div>
                         </div>
                         <div id="form-p2">
-                            <div id="form-p2-left">
-                                <div id="flash">
-                                    <form enctype="multipart/form-data" action="/upload" method="POST">
-                                        <input type="file" id="file-submit" name="file-submit">
-                                        <button type="submit">Upload</button>
-                                    </form>
+                            <form class="box" enctype="multipart/form-data" action="/upload" method="POST">
+                                <div class="box_input">
+                                    <input class="box_file" type="file" name="file" id="file" data-multiple-caption="{count} files selected" multiple />
+                                    <br>
+                                    <label for="file"><strong>Choose a file</strong><span class="box_dragndrop"> or drag it here</span></label>
+                                    <button class="box_button" type="submit">Upload</button>
                                 </div>
-                            </div>
-                            <div id="form-p2-right">
-                                <form class="box" enctype="multipart/form-data" action="/upload" method="POST">
-                                    <div class="box_input">
-                                        <input class="box_file" type="file" name="file" id="file" data-multiple-caption="{count} files selected" multiple />
-                                        <label for="file"><strong>Choose a file</strong><span class="box_dragndrop"> or drag it here</span></label>
-                                        <button class="box_button" type="submit">Upload</button>
-                                    </div>
-                                    <div class="box_uploading">Uploading...</div>
-                                    <div class="box_success">Done!</div>
-                                    <div class="box_error">Error! <span></span>.</div>
-                                </form>
-                                <!-- DRAG & DROP ZONE-->
-                            </div>
+                                <div class="box_uploading">Uploading...</div>
+                                <div class="box_success">Done!</div>
+                                <div class="box_error">Error! <span></span>.</div>
+                            </form>
+                            <!-- DRAG & DROP ZONE-->
                         </div>
                     </div>
                     <div id="table-container" class="grey-font">
@@ -73,6 +64,7 @@
             var sortDistState = 0;
             var sortPaceState = 0;
             var sortDateState = 0;
+            var myChart = null;
 
             var isAdvancedUpload = function() {
                 var div = document.createElement('div');
@@ -100,12 +92,18 @@
                 })
                 .on('drop', function(e) {
                     droppedFile = e.originalEvent.dataTransfer.files;
+                    console.log("length: ", droppedFile.length)
+                    if (droppedFile.length > 1) {
+                        console.log("Adding class: ");
+                        $form.addClass('is-error');
+                    }
+
                     $form.trigger('submit');
                 });
             }
 
             $form.on('submit', function(e) {
-                console.log("ENTERING");
+
                 if ($form.hasClass('is-uploading')) return false;
 
                 $form.addClass('is-uploading').removeClass('is-error');
@@ -113,15 +111,18 @@
                 if (isAdvancedUpload) {
                     e.preventDefault();
 
-                    var ajaxData = new FormData($form.get(0));
+                    var ajaxData = new FormData();
+                    
+                    for (const pair of ajaxData.entries()) {
+                        console.log("PAIR[0]:", pair[0]);
+                        console.log("PAIR[1]:", pair[1]);
+                    }
 
                     if (droppedFile) {
                         $.each( droppedFile, function(i, file) {
                             ajaxData.append( $input.attr('name'), file );
                         });
                     }
-
-
 
                     $.ajax({
                         url: $form.attr('action'),
@@ -136,10 +137,12 @@
                             $form.removeClass('is-uploading');
                         },
                         success: function(data) {
-                            console.log("SUCCESS");
-                            $form.addClass( data.success == true ? 'is-success' : 'is-error' );
-                            if (!data.success) $errorMsg.text(data.error);
+                            renderInformation(data);
+                            $form.addClass('is-success');
                         },
+                        error: function() {
+                            $form.removeClass('is-success').addClass('is-error');
+                        }
                     })
 
                 } else {
@@ -155,17 +158,16 @@
                 document.getElementById("form-p2").style.display = "flex";
             })
 
-
-            {% if file_data %}
-                // convert json to variable & render table:
+            function renderInformation(file_data) {
                 
-                const val = JSON.parse({{ file_data | tojson }});
-                const chart_val = JSON.parse({{ file_data | tojson }});
+                const val = JSON.parse(file_data);
+                const chart_val = JSON.parse(file_data);
                 myTable = render_table(val);
+                if (myChart != null) {
+                    myChart.destroy();
+                }
                 myChart = render_graph(chart_val);
-                
-                
-            {% endif %}
+            }
 
         </script>        
     </body>
