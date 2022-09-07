@@ -6,6 +6,10 @@ body {
 
 }
 
+span, label {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 .center-text {
     text-align: center;
 }
@@ -105,7 +109,7 @@ table td {
 }
 
 .standard-container {
-    background-color: rgb(245,245,245);
+    background-color: rgb(228, 241, 255);
     border: 1px solid rgb(220,220,220);
     border-radius: 10px;
 }
@@ -133,6 +137,8 @@ table td {
     height: 100%;
     align-items: center;
     justify-content: space-around;
+    opacity: 1;
+    transition: opacity 0.7s ease;
 }
 
 #form-p2-left {
@@ -162,12 +168,23 @@ table td {
     justify-content: space-evenly;
 }
 
+#file-info-div {
+    display: none;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 2s ease;
+}
+
 .drag-drop-form {
     display: none;
 }
 
 #drag-drop-image {
     width: 30px;
+}
+
+.form-label:hover {
+    cursor: pointer;
 }
 
 .box_input {
@@ -185,17 +202,27 @@ table td {
 .box_success,
 .box_error {
   display: none;
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+  opacity: 1;
+  transition: opacity 0.5s ease;
 }
+
+
 
 .is-error {
     background-color: red;
+    transition: background-color 1s,
 }
 
+.icon-padding {
+    margin-bottom: 8px;
+}
 .box {
     height: 85%;
     width: 85%;
     background-color: rgba(200, 230, 255);
-    outline: 2px dashed black;
     outline-offset: -10px;
     margin: 7%;
     display:flex;
@@ -204,16 +231,18 @@ table td {
 }
 
 .box.has-advanced-upload {
-    background-color: rgba(200, 230, 255);
-    outline: 2px dashed rgba(0, 0, 0, 0.6);
+    background-color: rgb(176, 220, 255);
+    outline: 2px dashed rgb(120, 120, 120);
     outline-offset: -10px;
+    transition: outline-offset 2s,
 }
 
 .box.has-advanced-upload .box_dragndrop {
     display: inline;
 }
 .box.is-dragover {
-    background-color: rgb(232, 249, 255);
+    background-color: rgb(250, 250, 250);
+    outline-offset: -15px;
 }
 
 .box.is-error {
@@ -221,7 +250,7 @@ table td {
 }
 
 .box.is-success {
-    background-color: rgba(43, 255, 0, 0.493)
+    background-color: hsl(110, 100%, 79%)
 }
 
 .inline-text {

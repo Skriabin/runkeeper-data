@@ -1,7 +1,17 @@
 "use strict";
 
 
+function fileSummary(data) {
+    const fileInfo = [];
+    if (typeof(data) == 'string') {
+        data = JSON.parse(data);
+    } 
+    let dataEntries = data.length;
 
+    fileInfo.push(dataEntries)
+
+    return fileInfo;
+}
 
 function triggerTooltip(chart, index) {
     const tooltip = chart.tooltip;
@@ -198,8 +208,23 @@ function sort_dist(arr) {
 }
 
 function render_graph(input) {
+    
 
     let arr = minutesToSeconds(input);
+
+    const plugin = {
+        id: 'background',
+        beforeDraw: (chart) => {
+            const {ctx, chartArea} = chart;
+            ctx.save();
+            ctx.globalCompositeOperation = 'destination-over';
+            ctx.fillStyle = 'white';
+            ctx.fillRect(chartArea.left, chartArea.top, chartArea.width, chartArea.height);
+            ctx.restore();
+        }
+    }
+    
+    Chart.register(plugin);
 
     // setup block
     const data = {
@@ -210,9 +235,9 @@ function render_graph(input) {
                 xAxisKey: 'Date',
             },
             label: '# of Votes',
+            backgroundColor: 'red',
             radius: 3,
             data: arr,
-            backgroundColor: 'red',
             borderColor: 'red',
             borderWidth: 1,
             label: "Pace",
@@ -223,6 +248,7 @@ function render_graph(input) {
     const config = {
         data,
         options: {
+            plugins: [plugin],
             scales: {
                 x: {
                     type: 'time',
@@ -258,6 +284,8 @@ function render_graph(input) {
         document.getElementById('myChart'),
         config
     );
+
+    console.log($('#myChart'));
     
     return myChart;
 }

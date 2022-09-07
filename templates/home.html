@@ -33,16 +33,32 @@
                         <div id="form-p2">
                             <form class="box" enctype="multipart/form-data" action="/upload" method="POST">
                                 <div class="box_input">
+                                    <div>
+                                        <svg class="icon-padding" id="dragdrop-icon" width="40" height="40" viewBox="0 0 24 24">
+                                            <path fill="rgb(60,60,60)" d="M12 5c3.453 0 5.891 2.797 5.567 6.78 1.745-.046 4.433.751 4.433 3.72 0 1.93-1.57 3.5-3.5 3.5h-13c-1.93 0-3.5-1.57-3.5-3.5 0-2.797 2.479-3.833 4.433-3.72-.167-4.218 2.208-6.78 5.567-6.78zm0-2c-4.006 0-7.267 3.141-7.479 7.092-2.57.463-4.521 2.706-4.521 5.408 0 3.037 2.463 5.5 5.5 5.5h13c3.037 0 5.5-2.463 5.5-5.5 0-2.702-1.951-4.945-4.521-5.408-.212-3.951-3.473-7.092-7.479-7.092zm4 10h-3v4h-2v-4h-3l4-4 4 4z"/>
+                                        </svg>
+                                    </div>
+                                    <span><strong>Drag your file here</strong></span>
+                                    <br>
+                                    <span>or</span>
                                     <input class="box_file" type="file" name="file" id="file" data-multiple-caption="{count} files selected" multiple />
                                     <br>
-                                    <label for="file"><strong>Choose a file</strong><span class="box_dragndrop"> or drag it here</span></label>
+                                    <label class="form-label" for="file"><strong><u>Choose a file</u></strong></label>
                                     <button class="box_button" type="submit">Upload</button>
                                 </div>
                                 <div class="box_uploading">Uploading...</div>
-                                <div class="box_success">Done!</div>
+                                <div class="box_success">
+                                    <svg class="icon-padding" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+                                        <path fill="green" d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.959 17l-4.5-4.319 1.395-1.435 3.08 2.937 7.021-7.183 1.422 1.409-8.418 8.591z"/>
+                                    </svg>
+                                    <span><strong>Done!</strong></span>
+                                </div>
                                 <div class="box_error">Error! <span></span>.</div>
                             </form>
                             <!-- DRAG & DROP ZONE-->
+                        </div>
+                        <div id="file-info-div">
+                            <table id="file-info-table"></table>
                         </div>
                     </div>
                     <div id="table-container" class="grey-font">
@@ -60,7 +76,11 @@
 
         <script src="static/main.js"></script>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/patternomaly/1.3.2/patternomaly.js"></script>
+
         <script>
+
+
             var sortDistState = 0;
             var sortPaceState = 0;
             var sortDateState = 0;
@@ -89,6 +109,7 @@
                 })
                 .on('dragleave dragend drop', function() {
                     $form.removeClass('is-dragover');
+                    $('#dragdrop-icon').css('transform', 'scale(1.0)');
                 })
                 .on('drop', function(e) {
                     droppedFile = e.originalEvent.dataTransfer.files;
@@ -137,8 +158,30 @@
                             $form.removeClass('is-uploading');
                         },
                         success: function(data) {
+                            const fileInfo = fileSummary(data);
+                            numOfEntries = fileInfo[0];
                             renderInformation(data);
                             $form.addClass('is-success');
+                            $('.box_input').css('display', 'none');
+                            $('.box_success').css('display', 'flex');
+
+                            // Wait 2 seconds before hiding success display
+                            setTimeout(() => { $('.box_success').css('opacity', 0) }, 1000 );
+                            setTimeout(() => { $('#form-p2').css('opacity', 0) }, 1200 );
+                            setTimeout(() => { 
+                                $('.box_success').css('display', 'none');
+                                $('#form-p2').css('display', 'none');
+                                $('#file-info-div').css('display', 'block'); 
+                            }, 2200 );
+                            setTimeout(() => { 
+                                $('#file-info-div').css('opacity', 1);
+                                $('#file-info-table').html(
+                                '<tr><td>Total Entries: ' + numOfEntries + '</td><td>Hi</td></tr>\
+                                <tr><td>Ok</td><td>Bo</td></tr>');
+                                }, 
+                                2210 
+                            );
+
                         },
                         error: function() {
                             $form.removeClass('is-success').addClass('is-error');
