@@ -10,208 +10,225 @@
     </head>
     <body>
         <div id="header">
-            <h1 class="inline-text">Runkeeper Data Tracker</h1>
-            {% if get_flashed_messages() %}
-                    <h2 class="inline-text title-spacer">|</h2>
-                    <h2 class="inline-text title-append">{{ get_flashed_messages() }} </h2>
-            {% endif %}
-            
-        </div>
-        <div id="page">         
-            <div id="dashboard-container" class="flex-container">
-                <div id="left-half">
-                    <div id="form-submission" class="standard-container">
-                        <div id="form-p1">
-                            <h2>How does it work?</h2>
-                            <p>Export your data from your Runkeeper application and upload it to 
-                                here to see a visual representation of your progress.
-                            </p>
-                            <div class="center-items">
-                                <button class="nav-bttn" id="form-switch">Continue</button>
-                            </div>
-                        </div>
-                        <div id="form-p2">
-                            <form class="box" enctype="multipart/form-data" action="/upload" method="POST">
-                                <div class="box_input">
-                                    <div>
-                                        <svg class="icon-padding" id="dragdrop-icon" width="40" height="40" viewBox="0 0 24 24">
-                                            <path fill="rgb(60,60,60)" d="M12 5c3.453 0 5.891 2.797 5.567 6.78 1.745-.046 4.433.751 4.433 3.72 0 1.93-1.57 3.5-3.5 3.5h-13c-1.93 0-3.5-1.57-3.5-3.5 0-2.797 2.479-3.833 4.433-3.72-.167-4.218 2.208-6.78 5.567-6.78zm0-2c-4.006 0-7.267 3.141-7.479 7.092-2.57.463-4.521 2.706-4.521 5.408 0 3.037 2.463 5.5 5.5 5.5h13c3.037 0 5.5-2.463 5.5-5.5 0-2.702-1.951-4.945-4.521-5.408-.212-3.951-3.473-7.092-7.479-7.092zm4 10h-3v4h-2v-4h-3l4-4 4 4z"/>
-                                        </svg>
-                                    </div>
-                                    <span><strong>Drag your file here</strong></span>
-                                    <br>
-                                    <span>or</span>
-                                    <input class="box_file" type="file" name="file" id="file" data-multiple-caption="{count} files selected" multiple />
-                                    <br>
-                                    <label class="form-label" for="file"><strong><u>Choose a file</u></strong></label>
-                                    <button class="box_button" type="submit">Upload</button>
-                                </div>
-                                <div class="box_uploading">Uploading...</div>
-                                <div class="box_success">
-                                    <svg class="icon-padding" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
-                                        <path fill="green" d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.959 17l-4.5-4.319 1.395-1.435 3.08 2.937 7.021-7.183 1.422 1.409-8.418 8.591z"/>
-                                    </svg>
-                                    <span><strong>Done!</strong></span>
-                                </div>
-                                <div class="box_error">Error! <span></span>.</div>
-                            </form>
-                            <!-- DRAG & DROP ZONE-->
-                        </div>
-                        <div id="file-info-div">
-                            <table id="file-info-table"></table>
-                        </div>
-                    </div>
-                    <div id="table-container" class="grey-font">
-                    </div>
-                </div>
-                <div id="chart-container" class="flex-child flex-center standard-container">
-                    <canvas id="myChart"></canvas>
-                </div>
+            <div id="title-container">
+                <h1 class="inline-text">Runkeeper Data Tracker</h1>
+                {% if get_flashed_messages() %}
+                        <h2 class="inline-text title-spacer">|</h2>
+                        <h2 class="inline-text title-append">{{ get_flashed_messages() }} </h2>
+                {% endif %}
             </div>
         </div>
+        <div class="body">
+            <div id="page">         
+                <div id="dashboard-container" class="flex-container">
+                    <div id="left-half">
+                        <div id="form-submission">
+                            <div id="form-p1">
+                                <div>
+                                    <div id="how-does-it-work-text" class="center-items">
+                                        <h2>How does it work?</h2>
+                                        <p>Export your data from your Runkeeper application and upload it to 
+                                            here to see a visual representation of your progress.
+                                        </p>
+                                        
+                                    </div>
+                                    <div class="center-items">
+                                        <button class="nav-bttn" id="form-switch">Continue</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="form-p2">
+                                <form class="box" enctype="multipart/form-data" action="/upload" method="POST">
+                                    <div class="box_input">
+                                        <div>
+                                            <svg class="icon-padding" id="dragdrop-icon" width="40" height="40" viewBox="0 0 24 24">
+                                                <path fill="rgb(60,60,60)" d="M12 5c3.453 0 5.891 2.797 5.567 6.78 1.745-.046 4.433.751 4.433 3.72 0 1.93-1.57 3.5-3.5 3.5h-13c-1.93 0-3.5-1.57-3.5-3.5 0-2.797 2.479-3.833 4.433-3.72-.167-4.218 2.208-6.78 5.567-6.78zm0-2c-4.006 0-7.267 3.141-7.479 7.092-2.57.463-4.521 2.706-4.521 5.408 0 3.037 2.463 5.5 5.5 5.5h13c3.037 0 5.5-2.463 5.5-5.5 0-2.702-1.951-4.945-4.521-5.408-.212-3.951-3.473-7.092-7.479-7.092zm4 10h-3v4h-2v-4h-3l4-4 4 4z"/>
+                                            </svg>
+                                        </div>
+                                        <span><strong>Drag your file here</strong></span>
+                                        <br>
+                                        <span>or</span>
+                                        <input class="box_file" type="file" name="file" id="file" data-multiple-caption="{count} files selected" multiple />
+                                        <br>
+                                        <label class="form-label" for="file"><strong><u>Choose a file</u></strong></label>
+                                        <button class="box_button" type="submit">Upload</button>
+                                    </div>
+                                    <div class="box_uploading">Uploading...</div>
+                                    <div class="box_success">
+                                        <svg class="icon-padding" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
+                                            <path fill="green" d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-1.959 17l-4.5-4.319 1.395-1.435 3.08 2.937 7.021-7.183 1.422 1.409-8.418 8.591z"/>
+                                        </svg>
+                                        <span><strong>Done!</strong></span>
+                                    </div>
+                                    <div class="box_error">Error! <span></span>.</div>
+                                </form>
+                                <!-- DRAG & DROP ZONE-->
+                            </div>
+                            <div id="file-info-div">
+                                <table id="file-info-table">
+                                    <tr><th colspan="2">File Information</th></tr>
+                                    <tr><td class="td-1"><strong>Total Entries </strong></td><td id="total-entries">PLACEHOLDER</td></tr>
+                                    <tr><td class="td-1"><strong>Fastest Pace </strong></td><td id="fastest-pace">PLACEHOLDER</td></tr>
+                                    <tr><td class="td-1"><strong>Longest Distance </strong></td><td id="longest-distance">PLACEHOLDER</td></tr>
+                                </table>
+                                <div id="form-switch-back">
+                                    <button class="nav-bttn">Upload another file?</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="table-container" class="grey-font">
+                        </div>
+                    </div>
+                    <div id="chart-container" class="flex-child flex-center standard-container">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                </div>
+            </div>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+            <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
-        <script src="static/main.js"></script>
+            <script src="static/main.js"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/patternomaly/1.3.2/patternomaly.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/patternomaly/1.3.2/patternomaly.js"></script>
 
-        <script>
+            <script>
 
 
-            var sortDistState = 0;
-            var sortPaceState = 0;
-            var sortDateState = 0;
-            var myChart = null;
+                var sortDistState = 0;
+                var sortPaceState = 0;
+                var sortDateState = 0;
+                var myChart = null;
 
-            var isAdvancedUpload = function() {
-                var div = document.createElement('div');
-                return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
-            }();
+                var isAdvancedUpload = function() {
+                    var div = document.createElement('div');
+                    return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
+                }();
 
-            var $form = $('.box');
-            var $input = $('.box_file')
-
-            if (isAdvancedUpload) {
-                $form.addClass('has-advanced-upload');
-                
-
-                var droppedFile = false;
-
-                $form.on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                })
-                .on('dragover dragenter', function() {
-                    $form.addClass('is-dragover');
-                })
-                .on('dragleave dragend drop', function() {
-                    $form.removeClass('is-dragover');
-                    $('#dragdrop-icon').css('transform', 'scale(1.0)');
-                })
-                .on('drop', function(e) {
-                    droppedFile = e.originalEvent.dataTransfer.files;
-                    console.log("length: ", droppedFile.length)
-                    if (droppedFile.length > 1) {
-                        console.log("Adding class: ");
-                        $form.addClass('is-error');
-                    }
-
-                    $form.trigger('submit');
-                });
-            }
-
-            $form.on('submit', function(e) {
-
-                if ($form.hasClass('is-uploading')) return false;
-
-                $form.addClass('is-uploading').removeClass('is-error');
+                var $form = $('.box');
+                var $input = $('.box_file')
 
                 if (isAdvancedUpload) {
-                    e.preventDefault();
-
-                    var ajaxData = new FormData();
+                    $form.addClass('has-advanced-upload');
                     
-                    for (const pair of ajaxData.entries()) {
-                        console.log("PAIR[0]:", pair[0]);
-                        console.log("PAIR[1]:", pair[1]);
-                    }
 
-                    if (droppedFile) {
-                        $.each( droppedFile, function(i, file) {
-                            ajaxData.append( $input.attr('name'), file );
-                        });
-                    }
+                    var droppedFile = false;
 
-                    $.ajax({
-                        url: $form.attr('action'),
-                        type: $form.attr('method'),
-                        data: ajaxData,
-                        dataType: 'json',
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        complete: function() {
-                            console.log("COMPLETE");
-                            $form.removeClass('is-uploading');
-                        },
-                        success: function(data) {
-                            const fileInfo = fileSummary(data);
-                            numOfEntries = fileInfo[0];
-                            renderInformation(data);
-                            $form.addClass('is-success');
-                            $('.box_input').css('display', 'none');
-                            $('.box_success').css('display', 'flex');
-
-                            // Wait 2 seconds before hiding success display
-                            setTimeout(() => { $('.box_success').css('opacity', 0) }, 1000 );
-                            setTimeout(() => { $('#form-p2').css('opacity', 0) }, 1200 );
-                            setTimeout(() => { 
-                                $('.box_success').css('display', 'none');
-                                $('#form-p2').css('display', 'none');
-                                $('#file-info-div').css('display', 'block'); 
-                            }, 2200 );
-                            setTimeout(() => { 
-                                $('#file-info-div').css('opacity', 1);
-                                $('#file-info-table').html(
-                                '<tr><td>Total Entries: ' + numOfEntries + '</td><td>Hi</td></tr>\
-                                <tr><td>Ok</td><td>Bo</td></tr>');
-                                }, 
-                                2210 
-                            );
-
-                        },
-                        error: function() {
-                            $form.removeClass('is-success').addClass('is-error');
-                        }
+                    $form.on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
                     })
+                    .on('dragover dragenter', function() {
+                        $form.addClass('is-dragover');
+                    })
+                    .on('dragleave dragend drop', function() {
+                        $form.removeClass('is-dragover');
+                        $('#dragdrop-icon').css('transform', 'scale(1.0)');
+                    })
+                    .on('drop', function(e) {
+                        droppedFile = e.originalEvent.dataTransfer.files;
+                        console.log("length: ", droppedFile.length)
+                        if (droppedFile.length > 1) {
+                            console.log("Adding class: ");
+                            $form.addClass('is-error');
+                        }
 
-                } else {
-                    // ajax for legacy browser
+                        $form.trigger('submit');
+                    });
                 }
-            });
 
-            
+                $form.on('submit', function(e) {
 
-            document.getElementById("form-switch").addEventListener('click', 
-            function() {
-                document.getElementById("form-p1").style.display = "none";
-                document.getElementById("form-p2").style.display = "flex";
-            })
+                    if ($form.hasClass('is-uploading')) return false;
 
-            function renderInformation(file_data) {
+                    $form.addClass('is-uploading').removeClass('is-error');
+
+                    if (isAdvancedUpload) {
+                        e.preventDefault();
+
+                        var ajaxData = new FormData();
+                        
+                        for (const pair of ajaxData.entries()) {
+                            console.log("PAIR[0]:", pair[0]);
+                            console.log("PAIR[1]:", pair[1]);
+                        }
+
+                        if (droppedFile) {
+                            $.each( droppedFile, function(i, file) {
+                                ajaxData.append( $input.attr('name'), file );
+                            });
+                        }
+
+                        $.ajax({
+                            url: $form.attr('action'),
+                            type: $form.attr('method'),
+                            data: ajaxData,
+                            dataType: 'json',
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            complete: function() {
+                                console.log("COMPLETE");
+                                $form.removeClass('is-uploading');
+                            },
+                            success: function(data) {
+                                let fileInfo = fileSummary(data);
+                                let dataLength = fileInfo[0];
+                                let fastestPace = fileInfo[1];
+                                let longestDist = fileInfo[2];
+                                renderInformation(data);
+                                $form.addClass('is-success');
+                                $('.box_input').css('display', 'none');
+                                $('.box_success').css('display', 'flex');
+                                $('#chart-container').css('display', 'flex');
+                                
+
+                                // Wait 2 seconds before hiding success display
+                                setTimeout(() => { $('.box_success').css('opacity', 0) }, 1000 );
+                                setTimeout(() => { $('#form-p2').css('opacity', 0) }, 1200 );
+                                setTimeout(() => { 
+                                    $('.box_success').css('display', 'none');
+                                    $('#form-p2').css('display', 'none');
+                                    $('#file-info-div').css('display', 'block'); 
+                                }, 2200 );
+                                setTimeout(() => { 
+                                    $('#file-info-div').css('opacity', 1); 
+                                    $('#total-entries').html(dataLength);
+                                    $('#fastest-pace').html(fastestPace);
+                                    $('#longest-distance').html(longestDist);
+                                }, 2210);
+                            },
+                            error: function() {
+                                $form.removeClass('is-success').addClass('is-error');
+                            }
+                        })
+
+                    } else {
+                        // ajax for legacy browser
+                    }
+                });
+
                 
-                const val = JSON.parse(file_data);
-                const chart_val = JSON.parse(file_data);
-                myTable = render_table(val);
-                if (myChart != null) {
-                    myChart.destroy();
-                }
-                myChart = render_graph(chart_val);
-            }
 
-        </script>        
+                document.getElementById("form-switch").addEventListener('click', 
+                function() {
+                    document.getElementById("form-p1").style.display = "none";
+                    document.getElementById("form-p2").style.display = "flex";
+                })
+
+                function renderInformation(file_data) {
+                    
+                    const val = JSON.parse(file_data);
+                    const chart_val = JSON.parse(file_data);
+                    myTable = render_table(val);
+                    if (myChart != null) {
+                        myChart.destroy();
+                    }
+                    myChart = render_graph(chart_val);
+                }
+
+            </script>   
+        </div>     
     </body>
 </html>

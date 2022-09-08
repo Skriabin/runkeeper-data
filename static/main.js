@@ -3,12 +3,49 @@
 
 function fileSummary(data) {
     const fileInfo = [];
+    var dataEntries, fastestPace, longestDist;
+    // Check object is JSON parsable
     if (typeof(data) == 'string') {
         data = JSON.parse(data);
     } 
-    let dataEntries = data.length;
 
+    // Obtain Number of data entries
+    dataEntries = data.length;
     fileInfo.push(dataEntries)
+    
+    // Obtain fastest pace
+    // Obtain greatest distance
+    fastestPace = 10000;
+    longestDist = 0;
+    for (let row in data) {
+        // Obtain Pace
+        let tempPace = data[row]['Average Pace'];
+        tempPace = minutesToSeconds(tempPace);
+        if (tempPace < fastestPace) {
+            fastestPace = tempPace;   
+        }
+
+        // Obtain Dist
+        let tempDist = data[row]['Distance (mi)'];
+        let tempDistNum = ''
+        for (let i in tempDist) {
+            if (tempDist[i] != '.') {
+                tempDistNum += tempDist[i];
+            }
+        }
+        tempDist = parseInt(tempDistNum) / 100;
+        if (tempDist > longestDist) {
+            longestDist = tempDist;
+        }
+    }
+
+    
+    // Format output
+    fastestPace = secondsToMinutes(fastestPace) + ' mph';
+    longestDist = longestDist + ' miles';
+
+    fileInfo.push(fastestPace);
+    fileInfo.push(longestDist);
 
     return fileInfo;
 }
@@ -38,11 +75,12 @@ function clearTooltip(chart) {
 
 function tdHighlight() {
     let index = 0;
-    document.querySelectorAll('td')
+    let container = document.querySelector('#table-container')
+    container.querySelectorAll('td')
     .forEach(e => e.addEventListener('mouseover', function() {
         let date, dataset, chartDate;
         // highlight table row
-        e.parentNode.style['background-color'] = 'rgb(255, 0, 0, 0.2)';
+        e.parentNode.style['background-color'] = 'rgb(255, 230, 230)';
 
         // Trigger graph data tooltips on table row hover
         date = e.parentNode.childNodes[0].innerHTML;
@@ -57,7 +95,7 @@ function tdHighlight() {
         triggerTooltip(myChart, index)
     }));
 
-    document.querySelectorAll('td')
+    container.querySelectorAll('td')
     .forEach(e => e.addEventListener('mouseout', function() {
         e.parentNode.style['background-color'] = 'white'
         clearTooltip(myChart);
@@ -88,17 +126,28 @@ function minutesToSeconds(arr) {
 
 function secondsToMinutes(arr) {
     let x, pace, minutes, seconds;
-    for (x in arr) {
-        // convert seconds to minutes
-        pace = arr[x]["Average Pace"];
+    if (typeof(arr) === 'object') {
+        for (x in arr) {
+            // convert seconds to minutes for each row
+            pace = arr[x]["Average Pace"];
+            minutes = Math.floor(pace / 60);
+            seconds = pace % 60;
+            if (seconds < 10) {
+                seconds = "0" + seconds;
+            }
+            let output = minutes + ":" + seconds;
+            (arr[x])["Average Pace"] = output;
+        }
+    } else if (typeof(arr) === 'number') {
+        // convert single number from seconds to minutes + seconds in MM:SS format
+        pace = arr;
         minutes = Math.floor(pace / 60);
         seconds = pace % 60;
         if (seconds < 10) {
             seconds = "0" + seconds;
         }
         let output = minutes + ":" + seconds;
-        (arr[x])["Average Pace"] = output;
-        
+        arr = output;
     }
     return arr;
 }
@@ -118,6 +167,7 @@ function render_table(data) {
     document.getElementById("table-container").innerHTML = table;
     document.getElementById("sort-dist").addEventListener('click', function() { sort_dist(data); });
     document.getElementById("sort-pace").addEventListener('click', function() { sort_pace(data); });
+    $('#table-container').css('border', '1px solid black');
     tdHighlight();
 }
 
