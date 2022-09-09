@@ -53,6 +53,7 @@ function fileSummary(data) {
 function triggerTooltip(chart, index) {
     const tooltip = chart.tooltip;
     const chartArea = chart.chartArea;
+    console.log("INDEX: ", index);
     tooltip.setActiveElements([{
         datasetIndex: 0,
         index: index,
@@ -61,8 +62,41 @@ function triggerTooltip(chart, index) {
         x: (chartArea.left + chartArea.right) / 2,
         y: (chartArea.top + chartArea.bottom) / 2,
     })
-
+    
     chart.update();
+    xAxisCount(chart);
+    return
+}
+
+function xAxisCount(chart) {
+    let dataSet, itemSet, chartDate, temp
+    dataSet = chart.config.data.datasets[0].data;
+    itemSet = new Set();
+        for (const obj in dataSet) {
+            chartDate = dataSet[obj]['Date'];
+            temp = ''
+            for (let char in chartDate) {
+                console.log(char);
+                if (char == '-') {
+                    break;
+                } else {
+                    temp += char;
+                }
+            }
+            chartDate = temp;
+            
+            if (chartDate != 'number') {
+                parseInt(chartDate);
+            }
+            chartDate = chartDate - 2000;
+        }
+}
+
+function scrollToTooltip() {
+    let xAxis, chartWidth
+    chartWidth = document.getElementById('chart-container-inner').clientWidth;
+    console.log(chartWidth);
+    return
 }
 
 function clearTooltip(chart) {
@@ -335,7 +369,7 @@ function render_graph(input) {
         config
     );
 
-    console.log($('#myChart'));
+    
     
     return myChart;
 }

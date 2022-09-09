@@ -1,30 +1,37 @@
 /* || FILE INFO TABLE FORMATS */
 
+html {
+    font-size: 100%;
+}
+
 #file-info-table {
     border: 2px solid rgb(0, 0, 0);
     border-collapse:collapse;
     border-radius: 5px;
 }
 
+.title {
+    line-height: 2em;
+    margin-inline-start: 1.2em;
+}
+
 #file-info-table th {
-    font-size: 18px;
-    padding-left: 1em;
+    font-size: 1.2rem;
+    padding-left: 0.5rem;
     width: 100%;
     height: 1.7em;
     text-align: left;
 }
 
-#file-info-table td {
-    height: 1.4em;
-}
+
 
 .td-1 {
-    width: 35%;
+    width: 45%;
     background-color: rgb(243, 243, 243);
 }
 
 #file-info-table td {
-    padding-left: 1em;
+    padding-left: 0.5em;
     border: 1px solid black;
     border-collapse: collapse;
 }
@@ -102,7 +109,8 @@ table {
 }
 
 #left-half {
-    width: 25%;
+    width: 350px;
+    height: 750px;
 }
 
 .flex-child {
@@ -111,15 +119,28 @@ table {
 }
 
 #chart-container {
-    height: 100%;
     display: none;
     align-items: center;
     padding-left: 5%;
     padding-right: 5%;
-    top: 0;
     width: 60%;
+    height: 750px;
+    margin-left: 30px;
 }
 
+#chart-container-inner {
+    position: relative;
+    width: 1200px;
+}
+
+#chart-overflow-wrap {
+    overflow-x: scroll;
+}
+
+#myChart {
+    width: 100%;
+    height: 500px;
+}
 #th-row {
     position: sticky;
     top: 0;
@@ -128,13 +149,13 @@ table {
 }
 
 #table-container {
-    height: 45vh;
+    height: 530px;
     overflow: auto;
     border: 0px solid black;
 }
 
 #dashboard-container {
-    height: 70vh;
+    align-items: center;
 }
 
 #page {
@@ -151,14 +172,14 @@ table {
 
 #header {
     display:block;
-    height: 10vh;
     border-bottom: 1px solid rgba(190, 190, 190, 1);
     background-color: rgb(241, 241, 241);
 }
 
+
+
 #title-container {
-    padding-top: 1.8em;
-    padding-left: 2em;
+
 }
 
 #form-switch {
@@ -166,8 +187,7 @@ table {
 }
 
 #form-submission {
-    height: 20vh;
-    margin-bottom: 5vh;
+    height: 220px;
 }
 
 #form-p1 {
@@ -360,7 +380,13 @@ div {
     font-size: 16px;
 }
 
-h1, h2, h3, h4, h5 {
+h1 {
+    font-size: calc(1.5rem + 0.5vw);
+    font-family: 'Montserrat', sans-serif;
+    color:rgb(50, 50, 50);
+}
+
+h2, h3, h4, h5 {
     font-family: Helvetica, Verdana, Geneva, Tahoma, sans-serif;
     color: rgb(50, 50, 50);
 }
@@ -422,8 +448,13 @@ h2 {
 }
 
 @media (max-width: 1200px) {
-    .flex-container {
+    .flex-container, .dashboard-container {
         flex-direction: column;
+    }
+    #chart-container {
+        margin-top: 50px;
+        margin-left: 0px;
+        width: 350px;
     }
 }
 

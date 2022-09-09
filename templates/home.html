@@ -7,15 +7,14 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="/static/css/main.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,900;1,900&display=swap" rel="stylesheet">
     </head>
     <body>
         <div id="header">
             <div id="title-container">
-                <h1 class="inline-text">Runkeeper Data Tracker</h1>
-                {% if get_flashed_messages() %}
-                        <h2 class="inline-text title-spacer">|</h2>
-                        <h2 class="inline-text title-append">{{ get_flashed_messages() }} </h2>
-                {% endif %}
+                <h1 class="title inline-text">Runkeeper Data Tracker</h1>
             </div>
         </div>
         <div class="body">
@@ -67,9 +66,9 @@
                             <div id="file-info-div">
                                 <table id="file-info-table">
                                     <tr><th colspan="2">File Information</th></tr>
-                                    <tr><td class="td-1"><strong>Total Entries </strong></td><td id="total-entries">PLACEHOLDER</td></tr>
-                                    <tr><td class="td-1"><strong>Fastest Pace </strong></td><td id="fastest-pace">PLACEHOLDER</td></tr>
-                                    <tr><td class="td-1"><strong>Longest Distance </strong></td><td id="longest-distance">PLACEHOLDER</td></tr>
+                                    <tr><td class="td-1">Total Entries</td><td id="total-entries">PLACEHOLDER</td></tr>
+                                    <tr><td class="td-1">Fastest Pace</td><td id="fastest-pace">PLACEHOLDER</td></tr>
+                                    <tr><td class="td-1">Longest Distance</td><td id="longest-distance">PLACEHOLDER</td></tr>
                                 </table>
                                 <div id="form-switch-back">
                                     <button class="nav-bttn">Upload another file?</button>
@@ -79,8 +78,12 @@
                         <div id="table-container" class="grey-font">
                         </div>
                     </div>
-                    <div id="chart-container" class="flex-child flex-center standard-container">
-                        <canvas id="myChart"></canvas>
+                    <div id="chart-container" class="standard-container">
+                        <div id="chart-overflow-wrap">
+                            <div id="chart-container-inner">
+                                <canvas id="myChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -227,7 +230,14 @@
                     }
                     myChart = render_graph(chart_val);
                 }
-
+                
+                document.getElementById('chart-overflow-wrap').addEventListener('scroll', () => { 
+                    console.log(document.getElementById('chart-overflow-wrap').scrollLeft);
+                 });
+                
+                    
+                
+                
             </script>   
         </div>     
     </body>
