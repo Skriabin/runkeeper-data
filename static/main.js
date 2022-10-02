@@ -292,10 +292,7 @@ function sort_dist(arr) {
 }
 
 function render_graph(input) {
-    
-
     let arr = minutesToSeconds(input);
-
     const plugin = {
         id: 'background',
         beforeDraw: (chart) => {

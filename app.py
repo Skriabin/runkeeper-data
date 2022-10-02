@@ -69,8 +69,6 @@ def process_file(filename):
     output = json.dumps(array)
     return output
 
-
-
 @app.route("/")
 def home():
     return render_template('home.html')

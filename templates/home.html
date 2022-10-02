@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-    <style>
-    </style>
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,6 +20,7 @@
                 <div id="dashboard-container" class="flex-container">
                     <div id="left-half">
                         <div id="form-submission">
+                            <!-- Div 1: Splash Intro -->
                             <div id="form-p1">
                                 <div>
                                     <div id="how-does-it-work-text" class="center-items">
@@ -29,13 +28,13 @@
                                         <p>Export your data from your Runkeeper application and upload it to 
                                             here to see a visual representation of your progress.
                                         </p>
-                                        
                                     </div>
                                     <div class="center-items">
                                         <button class="nav-bttn" id="form-switch">Continue</button>
                                     </div>
                                 </div>
                             </div>
+                            <!-- Div 2: DRAG & DROP ZONE-->
                             <div id="form-p2">
                                 <form class="box" enctype="multipart/form-data" action="/upload" method="POST">
                                     <div class="box_input">
@@ -61,8 +60,8 @@
                                     </div>
                                     <div class="box_error">Error! <span></span>.</div>
                                 </form>
-                                <!-- DRAG & DROP ZONE-->
                             </div>
+                            <!-- Div 3: File Data Div -->
                             <div id="file-info-div">
                                 <table id="file-info-table">
                                     <tr><th colspan="2">File Information</th></tr>
@@ -71,7 +70,7 @@
                                     <tr><td class="td-1">Longest Distance</td><td id="longest-distance">PLACEHOLDER</td></tr>
                                 </table>
                                 <div id="form-switch-back">
-                                    <button class="nav-bttn">Upload another file?</button>
+                                    <button id="submit-another" class="nav-bttn">Upload another file?</button>
                                 </div>
                             </div>
                         </div>
@@ -183,7 +182,7 @@
                                 renderInformation(data);
                                 $form.addClass('is-success');
                                 $('.box_input').css('display', 'none');
-                                $('.box_success').css('display', 'flex');
+                                $('.box_success').css({'display': 'flex', 'opacity': '1'});
                                 $('#chart-container').css('display', 'flex');
                                 
 
@@ -220,6 +219,16 @@
                     document.getElementById("form-p2").style.display = "flex";
                 })
 
+                document.getElementById("submit-another").addEventListener('click', 
+                function() {
+                    $form.removeClass('is-success')
+                    document.getElementById("file-info-div").style.display = "none";
+                    document.getElementById("file-info-div").style.opacity = "0";
+                    document.getElementById("form-p2").style.display = "flex";
+                    document.getElementById("form-p2").style.opacity = "1";
+                    $('.box_input').css('display', 'block');
+                })
+
                 function renderInformation(file_data) {
                     
                     const val = JSON.parse(file_data);
@@ -234,10 +243,6 @@
                 document.getElementById('chart-overflow-wrap').addEventListener('scroll', () => { 
                     console.log(document.getElementById('chart-overflow-wrap').scrollLeft);
                  });
-                
-                    
-                
-                
             </script>   
         </div>     
     </body>
